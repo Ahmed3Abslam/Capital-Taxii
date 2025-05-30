@@ -1,6 +1,6 @@
 FROM python:3.10-slim  # يُفضل استخدام 3.10 لكونه أكثر استقراراً مع DeepFace
 
-# تثبيت dependencies النظام الأساسية
+
 RUN apt-get update && apt-get install -y \
     libgl1 \
     libglib2.0-0 \
@@ -8,17 +8,13 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /app
 
-# نسخ requirements.txt أولاً للاستفادة من طبقات Docker cache
 COPY requirements.txt .
 
-# تثبيت حزم Python
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
-# نسخ باقي الملفات
 COPY . .
 
-# تعيين متغيرات البيئة لتقليل تحذيرات TensorFlow
 ENV TF_CPP_MIN_LOG_LEVEL=2 \
     TF_ENABLE_ONEDNN_OPTS=0
 
