@@ -1,4 +1,4 @@
-FROM python:3.10-slim  # يُفضل استخدام 3.10 لكونه أكثر استقراراً مع DeepFace
+FROM python:3.10-slim 
 
 
 RUN apt-get update && apt-get install -y \
