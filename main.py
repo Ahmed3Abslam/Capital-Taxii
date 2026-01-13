@@ -18,7 +18,6 @@ class ImageURLs(BaseModel):
     new_image_url: str
 
 def load_image_from_url(url: str, timeout: int = 10):
-    """تحميل الصورة من URL مع معالجة الأخطاء المحسنة"""
     try:
         response = requests.get(url, timeout=timeout)
         response.raise_for_status()
@@ -32,8 +31,7 @@ def load_image_from_url(url: str, timeout: int = 10):
 
 @app.post("/verify-driver/")
 async def verify_driver(images: ImageURLs):
-    """مقارنة وجهين من صورتين"""
-    # تحميل الصورتين مع timeout
+    
     original_image = load_image_from_url(images.original_image_url)
     new_image = load_image_from_url(images.new_image_url)
 
@@ -49,24 +47,22 @@ async def verify_driver(images: ImageURLs):
         )
 
     try:
-        # تحويل الصور إلى numpy arrays
+      
         img1_array = np.array(original_image)
         img2_array = np.array(new_image)
-        
-        # استخدام enforce_detection=False لتجنب الأخطاء عند عدم وجود وجوه
         result = DeepFace.verify(
             img1_path=img1_array,
             img2_path=img2_array,
-            detector_backend='opencv',  # تحديد backend للكشف
+            detector_backend='opencv',
             enforce_detection=True,
-            distance_metric='cosine'  # يمكن تجربة 'euclidean' أو 'cosine'
+            distance_metric='cosine'  
         )
         
         logger.info(f"Verification result: {result}")
 
         return {
             "match": result["verified"],
-            "distance": float(result["distance"]),  # تحويل إلى float لضمان التوافق مع JSON
+            "distance": float(result["distance"]), 
             "threshold": float(result["threshold"]),
             "message": "Faces match" if result["verified"] else "Faces do not match"
         }
